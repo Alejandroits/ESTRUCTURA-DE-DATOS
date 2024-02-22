@@ -1,0 +1,87 @@
+1. Añadir listas y se van ordenando
+
+#include <iostream>
+#include <list>
+
+using namespace std;
+
+//  ingresar 
+void ingresarElementos(list<int>& lista) {
+    int numElementos;
+    cout << "Ingrese el número de elementos: ";
+    cin >> numElementos;
+
+    cout << "Ingrese los elementos:" << endl;
+    for (int i = 0; i < numElementos; ++i) {
+        int elemento;
+        cin >> elemento;
+        lista.push_back(elemento);
+    }
+}
+
+//  mostrar 
+void mostrarLista(const list<int>& lista) {
+    for (int elemento : lista) {
+        cout << elemento << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    list<int> lista1, lista2;
+
+    cout << "Ingresar elementos para la lista 1:" << endl;
+    ingresarElementos(lista1);
+
+    cout << "Ingresar elementos para la lista 2:" << endl;
+    ingresarElementos(lista2);
+
+    // Ordenar ambas listas
+    lista1.sort();
+    lista2.sort();
+
+    cout << "Lista 1 ordenada: ";
+    mostrarLista(lista1);
+
+    cout << "Lista 2 ordenada: ";
+    mostrarLista(lista2);
+
+    return 0;
+}
+
+
+2. Arreglo de 20 posiciones y los devuelva ordenados
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    const int tamaño = 20;
+    int arreglo[tamaño];
+
+    
+    cout << "Ingrese " << tamaño << " numeros enteros:" << endl;
+    for (int i = 0; i < tamaño; ++i) {
+        cout << "Posicion " << i + 1 << ": ";
+        cin >> arreglo[i];
+    }
+
+    
+    sort(arreglo, arreglo + tamaño);
+
+   
+    cout << "Arreglo ordenado:" << endl;
+    for (int i = 0; i < tamaño; ++i) {
+        cout << arreglo[i] << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
+
+
+
+
+
