@@ -1,0 +1,283 @@
+#include <iostream>
+
+using namespace std;
+
+struct Nodo {
+    int dato;
+    int prioridad;
+    Nodo* siguiente;
+};
+struct Nodocol {
+    int dato;
+    int prioridad;
+    Nodocol* siguiente;
+};
+
+struct TreeNode {
+    int data;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int val) : data(val), left(NULL), right(NULL) {}
+};
+
+void insert(TreeNode*& root, int val) {
+    if (root == NULL) {
+        root = new TreeNode(val);
+    } else {
+        if (val < root->data) {
+            insert(root->left, val);
+        } else {
+            insert(root->right, val);
+        }
+    }
+}
+
+void printInOrder(TreeNode* root) {
+    if (root == NULL) {
+        return;
+    }
+    printInOrder(root->left);
+    cout << root->data << " ";
+    printInOrder(root->right);
+}
+void mostrarArbol(TreeNode* root) {
+    if (root == NULL) {
+        cout << "El arbol esta vacio.\n";
+        return;
+    }
+    cout << "El arbol ordenado es: ";
+    printInOrder(root);
+    cout << endl;
+}
+void agregarProceso(Nodo*& pila, int, int);
+void atenderProceso(Nodo*& pila);
+void imprimirProcesos(Nodo* pila);
+void agregarProcesocol(Nodocol*& cola, int, int);
+void atenderProcesocol(Nodocol*& cola);
+void imprimirProcesoscol(Nodocol* cola);
+
+int main() {
+    TreeNode* root = NULL;
+    Nodo* cola = NULL;
+    Nodo* pila = NULL;
+    Nodocol* colacol = NULL;
+    Nodocol* pilacol = NULL;
+    int dato, prioridad;
+    char opcion, opcion_menu_inicial;
+
+    do {
+        cout << "\nMENU INICIAL\n";
+        cout << "1. Ingresar datos a cola\n";
+        cout << "2. Ingresar datos a pila\n";
+        cout << "3. Ver datos ingresados como arbol\n";
+        cout << "4. Salir\n";
+        cout << "Seleccione una opcion: ";
+        cin >> opcion_menu_inicial;
+
+        switch (opcion_menu_inicial) {
+            case '1':
+                do {
+                    cout << "\nMENU COLA\n";
+                    cout << "1. Agregar proceso\n";
+                    cout << "2. Atender procesos\n";
+                    cout << "3. Ver datos ingresados como arbol\n";
+                    cout << "4. Volver al menu inicial\n";
+                    cout << "Seleccione una opcion: ";
+                    cin >> opcion;
+
+                    switch (opcion) {
+                        case '1':
+                            cout << "Ingrese el numero del proceso: ";
+                            cin >> dato;
+                            cout << "Ingrese la prioridad del proceso (1, 2, o 3): ";
+                            cin >> prioridad;
+                            agregarProceso(cola, dato, prioridad);
+                            insert(root, dato);
+                            break;
+                        case '2':
+                            atenderProceso(cola);
+                            break;
+                        case '3':
+                            mostrarArbol(root);
+                            break;
+                        case '4':
+                            cout << "Volviendo al menu inicial.\n";
+                            break;
+                        default:
+                            cout << "Opcion invalida. Por favor seleccione una opcion valida.\n";
+                    }
+                } while (opcion != '4');
+                break;
+            case '2':
+                do {
+                    cout << "\nMENU PILA\n";
+                    cout << "1. Agregar proceso\n";
+                    cout << "2. Atender procesos\n";
+                    cout << "3. Ver datos ingresados como arbol\n";
+                    cout << "4. Volver al menu inicial\n";
+                    cout << "Seleccione una opcion: ";
+                    cin >> opcion;
+
+                    switch (opcion) {
+                        case '1':
+                            cout << "Ingrese el numero del proceso: ";
+                            cin >> dato;
+                            cout << "Ingrese la prioridad del proceso (1, 2, o 3): ";
+                            cin >> prioridad;
+                            agregarProceso(pila, dato, prioridad);
+                            insert(root, dato);
+                            break;
+                        case '2':
+                            atenderProceso(pila);
+                            break;
+                        case '3':
+                            mostrarArbol(root);
+                            break;
+                        case '4':
+                            cout << "Volviendo al menu inicial.\n";
+                            break;
+                        default:
+                            cout << "Opcion invalida. Por favor seleccione una opcion valida.\n";
+                    }
+                } while (opcion != '4');
+                break;
+            case '3':
+                mostrarArbol(root);
+                break;
+            case '4':
+                cout << "Saliendo del programa.\n";
+                break;
+            default:
+                cout << "Opcion invalida. Por favor seleccione una opcion valida.\n";
+        }
+    } while (opcion_menu_inicial != '4');
+
+
+    while (cola != NULL) {
+        Nodo* aux = cola;
+        cola = cola->siguiente;
+        delete aux;
+    }
+    while (pila != NULL) {
+        Nodo* aux = pila;
+        pila = pila->siguiente;
+        delete aux;
+    }
+   
+
+    return 0;
+}
+
+void agregarProceso(Nodo*& pila, int dato, int prioridad) {
+if (prioridad < 1 || prioridad > 3) {
+        cout << "Error: La prioridad debe ser 1, 2 o 3.\n";
+        return;
+    }
+    Nodo* nuevo_nodo = new Nodo();
+    nuevo_nodo->dato = dato;
+    nuevo_nodo->prioridad = prioridad;
+    nuevo_nodo->siguiente = NULL;
+
+    if (pila == NULL) {
+        pila = nuevo_nodo;
+    } else {
+        Nodo* aux = pila;
+        Nodo* anterior = NULL;
+        while (aux != NULL && aux->prioridad <= prioridad) {
+            anterior = aux;
+            aux = aux->siguiente;
+        }
+        if (anterior == NULL) {
+            nuevo_nodo->siguiente = pila;
+            pila = nuevo_nodo;
+        } else {
+            anterior->siguiente = nuevo_nodo;
+            nuevo_nodo->siguiente = aux;
+        }
+    }
+    cout << "Proceso agregado correctamente.\n";
+}
+
+void atenderProceso(Nodo*& pila) {
+    if (pila == NULL) {
+        cout << "No hay procesos en espera en la pila.\n";
+        return;
+    }
+
+    Nodo* aux = pila;
+    pila = pila->siguiente;
+    cout << "Atendiendo proceso: " << aux->dato << " de prioridad " << aux->prioridad << endl;
+    delete aux;
+
+    cout << "Numeros restantes en la pila:\n";
+    imprimirProcesos(pila);
+}
+
+void imprimirProcesos(Nodo* pila) {
+    Nodo* aux = pila;
+    while (aux != NULL) {
+        cout << aux->dato << " - Prioridad: " << aux->prioridad << endl;
+        aux = aux->siguiente;
+    }
+    cout << endl;
+}
+
+void agregarProcesocol(Nodocol*& cola, int dato, int prioridad) {
+if (prioridad < 1 || prioridad > 3) {
+        cout << "Error: La prioridad debe ser 1, 2 o 3.\n";
+        return;
+    }
+    Nodocol* nuevo_nodo = new Nodocol();
+    nuevo_nodo->dato = dato;
+    nuevo_nodo->prioridad = prioridad;
+    nuevo_nodo->siguiente = NULL;
+
+    if (cola == NULL) {
+        cola = nuevo_nodo;
+    } else {
+        Nodocol* aux = cola;
+        Nodocol* anterior = NULL;
+
+        while (aux != NULL && aux->prioridad >= prioridad) {
+            anterior = aux;
+            aux = aux->siguiente;
+        }
+
+        if (anterior == NULL) {
+            nuevo_nodo->siguiente = cola;
+            cola = nuevo_nodo;
+        } else {
+            anterior->siguiente = nuevo_nodo;
+            nuevo_nodo->siguiente = aux;
+        }
+    }
+    cout << "Proceso agregado correctamente.\n";
+}
+
+
+void atenderProcesocol(Nodocol*& cola) {
+    if (cola == NULL) {
+        cout << "No hay procesos en espera en la cola.\n";
+        return;
+    }
+
+    Nodocol* aux = cola;
+    cola = cola->siguiente;
+    cout << "Atendiendo proceso: " << aux->dato << " de prioridad " << aux->prioridad << endl;
+    delete aux;
+
+    cout << "Numeros restantes en la cola:\n";
+    imprimirProcesoscol(cola);
+}
+
+void imprimirProcesoscol(Nodocol* cola) {
+    Nodocol* aux = cola;
+
+
+    while (aux != NULL) {
+        cout << aux->dato << " - Prioridad: " << aux->prioridad << endl;
+        aux = aux->siguiente;
+    }
+    cout << endl;
+}
