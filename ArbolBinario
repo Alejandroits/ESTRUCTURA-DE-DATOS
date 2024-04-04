@@ -1,0 +1,92 @@
+#include <iostream>
+#include <conio.h>
+using namespace std;
+
+// Definición de la estructura del nodo del árbol
+struct TreeNode {
+    int data;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int val) : data(val), left(NULL), right(NULL) {}
+};
+
+// Función para insertar un nuevo nodo en el árbol
+void insert(TreeNode*& root, int val) {
+    if (root == NULL) {
+        root = new TreeNode(val);
+    } else {
+        if (val < root->data) {
+            insert(root->left, val);
+        } else {
+            insert(root->right, val);
+        }
+    }
+}
+
+// Función para imprimir el árbol en orden
+void printInOrder(TreeNode* root) {
+    if (root == NULL) {
+        return;
+    }
+    printInOrder(root->left);
+    cout << root->data << " ";
+    printInOrder(root->right);
+}
+
+int main() {
+    TreeNode* root = NULL;
+    int principal;
+
+    cout << "Ingrese el numero principal: ";
+    cin >> principal;
+
+    // Inserta el número principal en la raíz del árbol
+    insert(root, principal);
+
+    cout << "Ingrese los numeros a organizar (0 para terminar):" << endl;
+    int num;
+    while (true) {
+        cin >> num;
+        if (num == 0) {
+            break;
+        }
+        insert(root, num);
+    }
+
+    cout << "El arbol ordenado es: ";
+    printInOrder(root);
+    cout << endl;
+    
+int valorBuscado;
+    cout << "Ingrese el valor a buscar: ";
+    cin >> valorBuscado;
+
+    TreeNode* current = root;
+    bool found = false;
+    string position;
+
+    while (current != NULL) {
+        if (valorBuscado == current->data) {
+            found = true;
+            break;
+        } else if (valorBuscado < current->data) {
+            position = "izquierdo";
+            current = current->left;
+        } else {
+            position = "derecho";
+            current = current->right;
+        }
+    }
+
+    if (found) {
+        cout << "El valor " << valorBuscado << " se encuentra en el lado " << position << " del árbol." << endl;
+    } else {
+        cout << "El valor " << valorBuscado << " no se encuentra en el árbol." << endl;
+    }
+
+    getch();
+    return 0;
+}
+
+
