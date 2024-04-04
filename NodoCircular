@@ -1,0 +1,241 @@
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+struct nodo {
+    int nro;
+    struct nodo *sgte;
+};
+
+typedef struct nodo *Lista; // Cambio en el typedef para simplificar la definición de Lista
+
+Lista fin = NULL; // Cambio de la declaración de fin
+Lista lista = NULL;
+
+void menu1();
+void insertarInicio();
+void insertarFinal();
+void mostrar();
+void buscarElemento();
+void encontrarSumaMinimoMaximo(); // Nueva función para encontrar suma, mínimo y máximo
+
+int main() {
+    int op;
+
+    do {
+        menu1();
+        cin >> op;
+
+        switch(op) {
+            case 1:
+                insertarInicio();
+                break;
+            case 2:
+                insertarFinal();
+                break;
+            case 3:
+                cout << "\n\n Lista Circular \n\n";
+                mostrar();
+                break;
+            case 4:
+                buscarElemento();
+                break;
+            case 5:
+                encontrarSumaMinimoMaximo(); // Agregamos el caso para encontrar suma, min y max
+                break;
+            case 6:
+                cout << "Saliendo del programa.\n";
+                break;
+            default:
+                cout << "OPCION NO VALIDA...!!!";
+                break;
+        }
+
+        cout << endl;
+        system("pause");
+        system("cls");
+    } while(op != 6);
+
+    return 0;
+}
+
+void menu1() {
+    cout << "\n\t\tLISTA ENLAZADA CIRCULAR\n\n";
+    cout << " 1. Insertar datos al inicio\n";
+    cout << " 2. Insertar datos al final\n";
+    cout << " 3. Mostrar lista\n";
+    cout << " 4. BUSCAR ELEMENTO\n";
+    cout << " 5. Encontrar suma, mínimo y máximo\n";
+    cout << " 6. SALIR\n";
+    cout << "\n INGRESE OPCION: ";
+}
+
+void insertarInicio() {
+    Lista nuevo = new struct nodo;
+
+    cout << "\n***INSERTA AL INICIO*****\n";
+    cout << "\nINGRESE DATO:";
+    cin >> nuevo->nro;
+    nuevo->sgte = NULL;
+
+    if(lista == NULL) {
+        cout << "PRIMER ELEMENTO..!!!";
+        lista = nuevo;
+        lista->sgte = lista;
+        fin = nuevo;
+    } else {
+        nuevo->sgte = lista;
+        lista = nuevo;
+        fin->sgte = lista;
+    }
+}
+
+void insertarFinal() {
+    Lista nuevo = new struct nodo;
+    cout << "\n***INSERTA AL FINAL*****\n";
+    cout << "\nINGRESE DATO:";
+    cin >> nuevo->nro;
+    nuevo->sgte = NULL;
+
+    if(lista == NULL) {
+        cout << "PRIMER ELEMENTO..!!!";
+        lista = nuevo;
+        lista->sgte = lista;
+        fin = nuevo;
+    } else {
+        fin->sgte = nuevo;
+        nuevo->sgte = lista;
+        fin = nuevo;
+    }
+}
+
+void mostrar() {
+    Lista aux = lista;
+    int i = 1;
+
+    if(lista != NULL) {
+        do {
+            cout << "  " << aux->nro;
+            aux = aux->sgte;
+            i++;
+        } while(aux != lista);
+    } else {
+        cout << "\n\n\tLista vacia...!" << endl;
+    }
+}
+
+void buscarElemento() {
+    Lista aux;
+    int i = 1, valor, flag = 0;
+
+    cout << "\nINGRESE ELEMENTO A BUSCAR:";
+    cin >> valor;
+    if(lista != NULL) {
+        aux = lista;
+
+        do {
+            if(aux->nro == valor) {
+                cout << "\n\n Encontrado en posicion " << i << endl;
+                flag = 1;
+                aux = aux->sgte;
+                i++;
+            } else {
+                aux = aux->sgte;
+                i++;
+            }
+        } while(aux != lista);
+
+        if(flag == 0)
+            cout << "\n\n\tNumero no econtrado..!" << endl;
+    } else {
+        cout << "\n\n\tLista vacia...!" << endl;
+    }
+}
+
+void encontrarSumaMinimoMaximo() {
+    Lista aux = lista;
+    int suma = 0;
+    int minimo = INT_MAX;
+    int maximo = INT_MIN;
+
+    if(lista != NULL) {
+        do {
+            suma += aux->nro;
+            if(aux->nro < minimo)
+                minimo = aux->nro;
+            if(aux->nro > maximo)
+                maximo = aux->nro;
+            aux = aux->sgte;
+        } while(aux != lista);
+
+        cout << "Suma de los elementos: " << suma << endl;
+        cout << "Mínimo: " << minimo << endl;
+        cout << "Máximo: " << maximo << endl;
+    } else {
+        cout << "\n\n\tLista vacia...!" << endl;
+    }
+}
+
+
+
+
+#include <iostream>
+#include <conio.h>
+using namespace std;
+
+// Definición de la estructura del nodo
+struct Node {
+    int data;
+    Node* next;
+};
+
+int main() {
+    // Ejemplo de nodo circular
+    Node* head = NULL;
+    Node* tail = NULL;
+
+    // Crear nodos
+    Node* node1 = new Node();
+    Node* node2 = new Node();
+    Node* node3 = new Node();
+
+    // Asignar datos a los nodos
+    node1->data = 1;
+    node2->data = 2;
+    node3->data = 3;
+
+    // Establecer enlaces para formar la lista circular
+    node1->next = node2;
+    node2->next = node3;
+    node3->next = node1; // El último nodo apunta al primer nodo
+
+    // El head apunta al primer nodo
+    head = node1;
+    // El tail apunta al último nodo
+    tail = node3;
+
+    // Ejemplo de impresión de la lista circular
+    cout << "Lista circular enlazada: ";
+    Node* current = head;
+    do {
+        cout << current->data << " ";
+        current = current->next;
+    } while (current != head);
+    cout << endl;
+
+    // Liberar memoria
+    delete node1;
+    delete node2;
+    delete node3;
+
+    // Ejemplo de nodo nulo
+    Node* nullNode = NULL;
+
+    if (nullNode == NULL) {
+        cout << "El puntero nullNode apunta a nullptr, lo que indica un nodo nulo." << endl;
+    } else {
+        cout << "El puntero nullNode no apunta a nullptr, lo que indica que no es un nodo nulo." << endl;
+    }
+getch();
+    return 0;
+}
