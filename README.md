@@ -1,5 +1,5 @@
 GRUPO DE INTEGRANTES:
 
-Esteban Alejandro Silba
-Gilberto Ramirez Segura
-Sebastian Ibarra Mendieta
+1. Esteban Alejandro Silba
+2. Gilberto Ramirez Segura
+3. Sebastian Ibarra Mendieta
