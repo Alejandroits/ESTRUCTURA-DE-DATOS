@@ -116,10 +116,10 @@ int main() {
                 break;
             case '2':
                 cout << "\nRecorridos del arbol:\n";
-                cout << "a. Recorrido de anchura (BFS)\n";
-                cout << "b. Recorrido inorden\n";
-                cout << "c. Recorrido preorden\n";
-                cout << "d. Recorrido postorden\n";
+                cout << "1. Recorrido de anchura (BFS)\n";
+                cout << "2. Recorrido inorden\n";
+                cout << "3. Recorrido preorden\n";
+                cout << "4. Recorrido postorden\n";
                 cout << "Seleccione una opcion: ";
                 cin >> opcion;
 
