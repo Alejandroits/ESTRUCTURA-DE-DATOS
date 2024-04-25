@@ -1,0 +1,245 @@
+#include <iostream>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+// Definición de la estructura del nodo del árbol AVL
+struct Nodo {
+    int dato;
+    int altura;
+    Nodo* izquierda;
+    Nodo* derecha;
+
+    Nodo(int valor) : dato(valor), altura(1), izquierda(NULL), derecha(NULL) {}
+};
+
+// Función para obtener la altura de un nodo
+int altura(Nodo* nodo) {
+    return nodo ? nodo->altura : 0;
+}
+
+// Función para obtener el factor de balance de un nodo
+int factorBalance(Nodo* nodo) {
+    return nodo ? altura(nodo->izquierda) - altura(nodo->derecha) : 0;
+}
+
+// Función para actualizar la altura de un nodo
+void actualizarAltura(Nodo* nodo) {
+    nodo->altura = 1 + max(altura(nodo->izquierda), altura(nodo->derecha));
+}
+
+// Función para realizar una rotación a la izquierda
+Nodo* rotacionIzquierda(Nodo* y) {
+    Nodo* x = y->derecha;
+    Nodo* T2 = x->izquierda;
+
+    // Realizar rotación
+    x->izquierda = y;
+    y->derecha = T2;
+
+    // Actualizar alturas
+    actualizarAltura(y);
+    actualizarAltura(x);
+
+    return x;
+}
+
+// Función para realizar una rotación a la derecha
+Nodo* rotacionDerecha(Nodo* x) {
+    Nodo* y = x->izquierda;
+    Nodo* T2 = y->derecha;
+
+    // Realizar rotación
+    y->derecha = x;
+    x->izquierda = T2;
+
+    // Actualizar alturas
+    actualizarAltura(x);
+    actualizarAltura(y);
+
+    return y;
+}
+
+// Función para insertar un nodo en el árbol AVL
+Nodo* insertar(Nodo* raiz, int valor) {
+    if (raiz == NULL) {
+        return new Nodo(valor);
+    }
+
+    if (valor < raiz->dato) {
+        raiz->izquierda = insertar(raiz->izquierda, valor);
+    } else if (valor > raiz->dato) {
+        raiz->derecha = insertar(raiz->derecha, valor);
+    } else {
+        // Valor duplicado no se permite en un árbol AVL
+        return raiz;
+    }
+
+    // Actualizar altura del nodo actual
+    actualizarAltura(raiz);
+
+    // Obtener el factor de balance del nodo actual
+    int balance = factorBalance(raiz);
+
+    // Casos de desequilibrio
+
+    // Izquierda Izquierda
+    if (balance > 1 && valor < raiz->izquierda->dato) {
+        return rotacionDerecha(raiz);
+    }
+
+    // Derecha Derecha
+    if (balance < -1 && valor > raiz->derecha->dato) {
+        return rotacionIzquierda(raiz);
+    }
+
+    // Izquierda Derecha
+    if (balance > 1 && valor > raiz->izquierda->dato) {
+        raiz->izquierda = rotacionIzquierda(raiz->izquierda);
+        return rotacionDerecha(raiz);
+    }
+
+    // Derecha Izquierda
+    if (balance < -1 && valor < raiz->derecha->dato) {
+        raiz->derecha = rotacionDerecha(raiz->derecha);
+        return rotacionIzquierda(raiz);
+    }
+
+    return raiz;
+}
+
+// Recorrido de anchura (BFS)
+void recorridoAnchura(Nodo* raiz) {
+    if (raiz == NULL) {
+        return;
+    }
+
+    queue<Nodo*> cola;
+    cola.push(raiz);
+
+    while (!cola.empty()) {
+        Nodo* nodoActual = cola.front();
+        cola.pop();
+
+        cout << nodoActual->dato << " ";
+
+        if (nodoActual->izquierda != NULL) {
+            cola.push(nodoActual->izquierda);
+        }
+
+        if (nodoActual->derecha != NULL) {
+            cola.push(nodoActual->derecha);
+        }
+    }
+
+    cout << endl;
+}
+
+// Recorrido inorden (izquierda, raíz, derecha)
+void recorridoInorden(Nodo* raiz) {
+    if (raiz == NULL) {
+        return;
+    }
+
+    recorridoInorden(raiz->izquierda);
+    cout << raiz->dato << " ";
+    recorridoInorden(raiz->derecha);
+}
+
+// Recorrido preorden (raíz, izquierda, derecha)
+void recorridoPreorden(Nodo* raiz) {
+    if (raiz == NULL) {
+        return;
+    }
+
+    cout << raiz->dato << " ";
+    recorridoPreorden(raiz->izquierda);
+    recorridoPreorden(raiz->derecha);
+}
+
+// Recorrido postorden (izquierda, derecha, raíz)
+void recorridoPostorden(Nodo* raiz) {
+    if (raiz == NULL) {
+        return;
+    }
+
+    recorridoPostorden(raiz->izquierda);
+    recorridoPostorden(raiz->derecha);
+    cout << raiz->dato << " ";
+}
+void liberarMemoria(Nodo* raiz) {
+    if (raiz == NULL) {
+        return;
+    }
+
+    liberarMemoria(raiz->izquierda);
+    liberarMemoria(raiz->derecha);
+
+    delete raiz;
+}
+
+int main() {
+    Nodo* raiz = NULL;
+    char opcion_menu_inicial, opcion;
+    int valor;
+
+    do {
+        cout << "\nMENU INICIAL\n";
+        cout << "1. Insertar nodo en el árbol AVL\n";
+        cout << "2. Recorridos del árbol AVL\n";
+        cout << "3. Salir\n";
+        cout << "Seleccione una opcion: ";
+        cin >> opcion_menu_inicial;
+
+        switch (opcion_menu_inicial) {
+            case '1':
+                cout << "Ingrese el valor del nodo a insertar: ";
+                cin >> valor;
+                raiz = insertar(raiz, valor);
+                break;
+            case '2':
+                cout << "\nRecorridos del árbol AVL:\n";
+                cout << "1. Recorrido de anchura (BFS)\n";
+                cout << "2. Recorrido inorden\n";
+                cout << "3. Recorrido preorden\n";
+                cout << "4. Recorrido postorden\n";
+                cout << "Seleccione una opcion: ";
+                cin >> opcion;
+
+                switch (opcion) {
+                    case '1':
+                        cout << "Recorrido de anchura (BFS): ";
+                        recorridoAnchura(raiz);
+                        break;
+                    case '2':
+                        cout << "Recorrido inorden: ";
+                        recorridoInorden(raiz);
+                        cout << endl;
+                        break;
+                    case '3':
+                        cout << "Recorrido preorden: ";
+                        recorridoPreorden(raiz);
+                        cout << endl;
+                        break;
+                    case '4':
+                        cout << "Recorrido postorden: ";
+                        recorridoPostorden(raiz);
+                        cout << endl;
+                        break;
+                    default:
+                        cout << "Opcion invalida. Por favor seleccione una opcion valida.\n";
+                }
+                break;
+            case '3':
+                cout << "Saliendo del programa.\n";
+                break;
+            default:
+                cout << "Opcion invalida. Por favor seleccione una opcion valida.\n";
+        }
+    } while (opcion_menu_inicial != '3');
+
+   
+ liberarMemoria(raiz);
+
+    return 0;
+}
