@@ -85,7 +85,16 @@ void recorridoPostorden(Nodo* raiz) {
     recorridoPostorden(raiz->derecha);
     cout << raiz->dato << " ";
 }
+void liberarMemoria(Nodo* raiz) {
+    if (raiz == NULL) {
+        return;
+    }
 
+    liberarMemoria(raiz->izquierda);
+    liberarMemoria(raiz->derecha);
+
+    delete raiz;
+}
 int main() {
     Nodo* raiz = NULL;
     char opcion_menu_inicial, opcion;
@@ -93,8 +102,8 @@ int main() {
 
     do {
         cout << "\nMENU INICIAL\n";
-        cout << "1. Insertar nodo en el árbol\n";
-        cout << "2. Recorridos del árbol\n";
+        cout << "1. Insertar nodo en el arbol\n";
+        cout << "2. Recorridos del arbol\n";
         cout << "3. Salir\n";
         cout << "Seleccione una opcion: ";
         cin >> opcion_menu_inicial;
@@ -106,7 +115,7 @@ int main() {
                 raiz = insertar(raiz, valor);
                 break;
             case '2':
-                cout << "\nRecorridos del árbol:\n";
+                cout << "\nRecorridos del arbol:\n";
                 cout << "a. Recorrido de anchura (BFS)\n";
                 cout << "b. Recorrido inorden\n";
                 cout << "c. Recorrido preorden\n";
@@ -115,21 +124,21 @@ int main() {
                 cin >> opcion;
 
                 switch (opcion) {
-                    case 'a':
+                    case '1':
                         cout << "Recorrido de anchura (BFS): ";
                         recorridoAnchura(raiz);
                         break;
-                    case 'b':
+                    case '2':
                         cout << "Recorrido inorden: ";
                         recorridoInorden(raiz);
                         cout << endl;
                         break;
-                    case 'c':
+                    case '3':
                         cout << "Recorrido preorden: ";
                         recorridoPreorden(raiz);
                         cout << endl;
                         break;
-                    case 'd':
+                    case '4':
                         cout << "Recorrido postorden: ";
                         recorridoPostorden(raiz);
                         cout << endl;
@@ -146,8 +155,7 @@ int main() {
         }
     } while (opcion_menu_inicial != '3');
 
-    // Liberar memoria del árbol (opcional)
-    // Aquí podrías agregar una función para liberar la memoria del árbol si es necesario
+   liberarMemoria(raiz);
 
     return 0;
 }
