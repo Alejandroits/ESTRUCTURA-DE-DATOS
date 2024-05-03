@@ -1,61 +1,103 @@
 #include <iostream>
-#include <list>
+#include <vector>
+#include <unordered_map>
+#include <queue>
+#include <climits>
+#include <stack>
+
 using namespace std;
 
 class Grafo {
-    int V; // Número de vértices
-    list<int> *listaAdy; // Puntero a un array que contiene las listas de adyacencia
+private:
+    unordered_map<char, unordered_map<char, int>> vertices;
 
 public:
-    Grafo(int V); // Constructor
-    void agregarArista(int v, int w); // Función para agregar una arista al grafo
-    void DFSUtil(int v, bool visitado[]); // Función recursiva utilizada por DFS
-    void DFS(int v); // Función DFS que recorre el grafo
+    void InsertaArista(char origen, char destino, int peso) {
+        vertices[origen][destino] = peso;
+    }
+
+    int Dijkstra(char origen, char destino, stack<char>& camino) {
+        unordered_map<char, int> distancia;
+        unordered_map<char, char> padre;
+        priority_queue<pair<int, char>, vector<pair<int, char>>, greater<pair<int, char>>> cola_prioridad;
+
+        for (const auto& par : vertices) {
+            distancia[par.first] = INT_MAX;
+        }
+        distancia[origen] = 0;
+        cola_prioridad.push({0, origen});
+        padre[origen] = origen;
+
+        while (!cola_prioridad.empty()) {
+            char actual = cola_prioridad.top().second;
+            int costo = cola_prioridad.top().first;
+            cola_prioridad.pop();
+
+            for (const auto& vecino : vertices[actual]) {
+                if (distancia[actual] + vecino.second < distancia[vecino.first]) {
+                    distancia[vecino.first] = distancia[actual] + vecino.second;
+                    cola_prioridad.push({distancia[vecino.first], vecino.first});
+                    padre[vecino.first] = actual;
+                }
+            }
+        }
+
+        int costo_total = distancia[destino];
+        if (costo_total != INT_MAX) {
+            char temp = destino;
+            while (temp != origen) {
+                camino.push(temp);
+                temp = padre[temp];
+            }
+            camino.push(origen);
+        }
+        return costo_total;
+    }
 };
 
-Grafo::Grafo(int V) {
-    this->V = V;
-    listaAdy = new list<int>[V];
-}
-
-void Grafo::agregarArista(int v, int w) {
-    listaAdy[v].push_back(w); // Agrega w a la lista de v
-}
-
-void Grafo::DFSUtil(int v, bool visitado[]) {
-    // Marca el vértice actual como visitado y lo imprime
-    visitado[v] = true;
-    cout << v << " ";
-
-    // Recorre todos los vértices adyacentes a este vértice
-    for(auto it = listaAdy[v].begin(); it != listaAdy[v].end(); ++it) {
-        if(!visitado[*it])
-            DFSUtil(*it, visitado);
-    }
-}
-
-void Grafo::DFS(int v) {
-    
-    bool *visitado = new bool[V];
-    for(int i = 0; i < V; i++)
-        visitado[i] = false;
-
-   
-    DFSUtil(v, visitado);
-}
-
 int main() {
-    Grafo g(4);
-    g.agregarArista(0, 1);
-    g.agregarArista(0, 2);
-    g.agregarArista(1, 2);
-    g.agregarArista(2, 0);
-    g.agregarArista(2, 3);
-    g.agregarArista(3, 3);
+    Grafo grafo;
 
-    cout << "Recorrido DFS iniciando desde el vértice 2: ";
-    g.DFS(2);
-    cout << endl;
+    vector<vector<int>> datos = {
+        {'A', 'B', 7},
+        {'A', 'D', 5},
+        {'B', 'C', 8},
+        {'B', 'D', 9},
+        {'B', 'E', 7},
+        {'C', 'E', 5},
+        {'D', 'E', 15},
+        {'D', 'F', 6},
+        {'E', 'F', 8},
+        {'E', 'G', 9},
+        {'F', 'G', 11},
+        {'G', 'C', 1}
+    };
+
+    for (const auto& dato : datos) {
+        grafo.InsertaArista(dato[0], dato[1], dato[2]);
+    }
+
+    char origen, destino;
+    cout << "Ingrese el nodo de origen (A, B, C, D, E, F, G): ";
+    cin >> origen;
+    cout << "Ingrese el nodo de destino (A, B, C, D, E, F, G): ";
+    cin >> destino;
+
+    stack<char> camino;
+    int costo = grafo.Dijkstra(origen, destino, camino);
+
+    if (costo != INT_MAX) {
+        cout << "El costo total de llegar de " << origen << " a " << destino << " es: " << costo << endl;
+        cout << "Camino: ";
+        while (!camino.empty()) {
+            cout << camino.top();
+            camino.pop();
+            if (!camino.empty()) cout << " <- ";
+        }
+        cout << endl;
+    } else {
+        cout << "No hay un camino válido desde " << origen << " hasta " << destino << endl;
+    }
 
     return 0;
 }
